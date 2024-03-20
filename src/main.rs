@@ -12,6 +12,10 @@ struct Cli {
     /// The source directory to operate on.
     #[arg(value_name = "SOURCE_PATH")]
     source_dir: String,
+
+    /// Flag to force delete without confirmation.
+    #[arg(short, long, action)]
+    force: bool,
 }
 
 fn main() {
@@ -21,7 +25,9 @@ fn main() {
         panic!("{}", e);
     });
 
-    let confirmation = get_user_confirmation(&dir_to_remove).trim().to_lowercase();
+    let confirmation = get_user_confirmation(&dir_to_remove, opts.force)
+        .trim()
+        .to_lowercase();
 
     if confirmation != "y" {
         println!("Aborting as user input '{confirmation}' was not 'y'");
@@ -42,7 +48,16 @@ fn main() {
     println!("Done in {}s", now.elapsed().as_secs_f32());
 }
 
-fn get_user_confirmation(source_dir: &PathBuf) -> String {
+fn get_user_confirmation(source_dir: &PathBuf, force: bool) -> String {
+    if force == true {
+        println!("Running delete without confirmation.");
+        println!(
+            "Deleting all files and folders in {}.",
+            source_dir.to_string_lossy()
+        );
+        return "y".to_string();
+    }
+
     print!(
         "Are you sure you want to delete all files and folders in {}? (y/n) ",
         source_dir.to_string_lossy()
