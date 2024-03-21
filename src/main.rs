@@ -39,7 +39,7 @@ fn main() {
 }
 
 fn get_user_confirmation(
-    source_dir: &PathBuf,
+    source_dir: &Path,
     force: bool,
     input: &mut impl BufRead,
     output: &mut impl Write,
